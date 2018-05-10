@@ -1,0 +1,20 @@
+simpleGroups:
+  -
+    name: simpleGroups1
+    jobs:
+      -
+        name: testJob1
+        target: club.janna.quartz.job.TestJob
+        interval: 5
+cronGroups:
+  -
+    name: cronGroup1
+    jobs:
+      -
+        name: testJob2
+        target: club.janna.quartz.job.TestJob2
+        cronExpression: 0/5 * * * * ?
+      -
+        name: testJob3
+        target: club.janna.quartz.job.TestJob2
+        cronExpression: 0/5 * * * * ?

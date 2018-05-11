@@ -10,7 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 /**
  * Created by guopanbo on 18/5/10.
  */
-public class Bootstrap {
+public class Bootstrap implements Runnable {
 
     private Logger logger = LoggerFactory.getLogger(Bootstrap.class);
 
@@ -57,5 +57,9 @@ public class Bootstrap {
         } else {
             throw new RuntimeException("configure load failed!");
         }
+    }
+
+    public void run() {
+        init();
     }
 }

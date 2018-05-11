@@ -10,11 +10,6 @@ public class TestBootstrap {
     @Test
     public void testInit() {
         new Bootstrap().init();
-        try {
-            Thread.sleep(60 * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
 }

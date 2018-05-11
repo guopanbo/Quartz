@@ -7,6 +7,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by guopanbo on 18/5/11.
@@ -23,6 +24,22 @@ public class QuartzUtil {
     public static void addJob(Class<Job> jobClass, String jobName, String groupName, int interval) {
         try {
             QuartzProvider.getInstance().getScheduler().scheduleJob(buildJobDetail(jobClass, jobName, groupName), buildSimpleTrigger(interval, jobName, groupName));
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 添加job
+     * @param jobClass
+     * @param jobName
+     * @param groupName
+     * @param interval
+     * @param data
+     */
+    public static void addJob(Class<Job> jobClass, String jobName, String groupName, int interval, Map<String, String> data) {
+        try {
+            QuartzProvider.getInstance().getScheduler().scheduleJob(buildJobDetail(jobClass, jobName, groupName, data), buildSimpleTrigger(interval, jobName, groupName));
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -129,7 +146,7 @@ public class QuartzUtil {
      * @param group
      * @return
      */
-    public static JobDetail buildJobDetail(String target, String name, String group) {
+    private static JobDetail buildJobDetail(String target, String name, String group) {
         try {
             return buildJobDetail((Class<Job>) Class.forName(target), name, group);
         } catch (ClassNotFoundException e) {
@@ -145,8 +162,21 @@ public class QuartzUtil {
      * @param group
      * @return
      */
-    public static JobDetail buildJobDetail(Class<Job> jobClass, String name, String group) {
+    private static JobDetail buildJobDetail(Class<Job> jobClass, String name, String group) {
         return JobBuilder.newJob(jobClass).withIdentity(name, group).build();
+    }
+
+    /**
+     * 创建job
+     * @param jobClass
+     * @param name
+     * @param group
+     * @return
+     */
+    private static JobDetail buildJobDetail(Class<Job> jobClass, String name, String group, Map<String, String> map) {
+        JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(name, group).build();
+        jobDetail.getJobDataMap().putAll(map);
+        return jobDetail;
     }
 
     /**
@@ -156,7 +186,7 @@ public class QuartzUtil {
      * @param group
      * @return
      */
-    public static Trigger buildSimpleTrigger(int interval, String name, String group) {
+    private static Trigger buildSimpleTrigger(int interval, String name, String group) {
         return TriggerBuilder.newTrigger().withIdentity(name, group).withSchedule(SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(interval).repeatForever()).build();
     }
 
@@ -167,7 +197,7 @@ public class QuartzUtil {
      * @param group
      * @return
      */
-    public static Trigger buildCronTrigger(String cronExpression, String name, String group) {
+    private static Trigger buildCronTrigger(String cronExpression, String name, String group) {
         return TriggerBuilder.newTrigger().withIdentity(name, group).withSchedule(CronScheduleBuilder.cronSchedule(cronExpression)).build();
     }
 }

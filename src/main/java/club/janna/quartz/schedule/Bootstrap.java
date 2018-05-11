@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileInputStream;
+
 /**
  * Created by guopanbo on 18/5/10.
  */
@@ -21,8 +23,9 @@ public class Bootstrap implements Runnable {
     public Configure load() {
         try {
             Yaml yaml = new Yaml();
-            Configure conf = yaml.loadAs(Thread.currentThread().getContextClassLoader().getResourceAsStream("quartz.yml"), Configure.class);
-            logger.debug("load quartz configure by classpath:/quartz.yml");
+            String confPath = Thread.currentThread().getContextClassLoader().getResource("quartz.yml").getPath();
+            Configure conf = yaml.loadAs(new FileInputStream(confPath), Configure.class);
+            logger.debug("load quartz configure by classpath : {}", confPath);
             return conf;
         } catch(Exception e) {
             e.printStackTrace();

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+
+	<!-- 本地开发 -->
+<!-- 	<property resource="/logback.properties" /> -->
+	<!-- 测试环境 -->
+	<!-- <property file="/logback.properties" /> -->
+	<!-- 生产环境 -->
+	<!-- <property file="/logback.properties" /> -->
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="rolling"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!-- <file>mylog.txt</file> -->
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>/Users/guopanbo/workspacesf/adminLog-%d{yyyy-MM-dd}.%i.txt
+			</fileNamePattern>
+			<!-- each file should be at most 100MB, keep 60 days worth of history, 
+				but at most 20GB -->
+			<maxFileSize>100mb</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>20gb</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>[%-5level] %d{HH:mm:ss.SSS} [%thread] %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<logger name="com.ibatis" level="debug" />
+
+	<root level="info">
+<!-- 		<appender-ref ref="rolling" /> -->
+		<appender-ref ref="console" />
+	</root>
+</configuration> 

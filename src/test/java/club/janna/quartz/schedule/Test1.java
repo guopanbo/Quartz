@@ -9,7 +9,7 @@ import org.quartz.impl.StdSchedulerFactory;
 /**
  * Created by guopanbo on 18/5/10.
  */
-public class Test {
+public class Test1 {
     public static void main(String[] args) {
         SchedulerFactory factory = new StdSchedulerFactory();
         try {

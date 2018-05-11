@@ -41,7 +41,6 @@ public class Bootstrap implements Runnable {
                     if(sg != null && sg.getJobs() != null)
                         for(SimpleJob sj : sg.getJobs())
                             if(sj != null && StringUtils.isNotBlank(sj.getTarget()) && sj.getInterval() != null) {
-                                logger.debug("register simple job, target[{}], name[{}], group[{}], interval[{}]", sj.getTarget(), sj.getName(), sg.getName(), sj.getInterval());
                                 QuartzUtil.addJob(sj.getTarget(), sj.getName(), sg.getName(), sj.getInterval());
                             }
             //cron
@@ -50,10 +49,9 @@ public class Bootstrap implements Runnable {
                     if(cg != null && cg.getJobs() != null)
                         for(CronJob cj : cg.getJobs())
                             if(cj != null && StringUtils.isNotBlank(cj.getTarget()) && StringUtils.isNotBlank(cj.getCronExpression())) {
-                                logger.debug("register cron job, target[{}], name[{}], group[{}], expression[{}]", cj.getTarget(), cj.getName(), cg.getName(), cj.getCronExpression());
                                 QuartzUtil.addJob(cj.getTarget(), cj.getName(), cg.getName(), cj.getCronExpression());
                             }
-
+            logger.debug("Job create complete");
         } else {
             throw new RuntimeException("configure load failed!");
         }

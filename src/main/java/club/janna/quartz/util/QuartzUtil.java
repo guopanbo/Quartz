@@ -4,6 +4,8 @@ import club.janna.quartz.job.JobStatus;
 import club.janna.quartz.provider.QuartzProvider;
 import org.quartz.*;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.Map;
  */
 public class QuartzUtil {
 
+    private static Logger logger = LoggerFactory.getLogger(QuartzUtil.class);
+
     /**
      * 添加job
      * @param jobClass
@@ -21,9 +25,10 @@ public class QuartzUtil {
      * @param groupName
      * @param interval
      */
-    public static void addJob(Class<Job> jobClass, String jobName, String groupName, int interval) {
+    public static void addJob(Class<? extends Job> jobClass, String jobName, String groupName, int interval) {
         try {
             QuartzProvider.getInstance().getScheduler().scheduleJob(buildJobDetail(jobClass, jobName, groupName), buildSimpleTrigger(interval, jobName, groupName));
+            logger.debug("register simple job, target[{}], name[{}], group[{}], interval[{}]", jobClass.toString(), jobName, groupName, interval);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -37,9 +42,10 @@ public class QuartzUtil {
      * @param interval
      * @param data
      */
-    public static void addJob(Class<Job> jobClass, String jobName, String groupName, int interval, Map<String, String> data) {
+    public static void addJob(Class<? extends Job> jobClass, String jobName, String groupName, int interval, Map<String, Object> data) {
         try {
             QuartzProvider.getInstance().getScheduler().scheduleJob(buildJobDetail(jobClass, jobName, groupName, data), buildSimpleTrigger(interval, jobName, groupName));
+            logger.debug("register simple job, target[{}], name[{}], group[{}], interval[{}], data[{}]", jobClass.toString(), jobName, groupName, interval, data);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -55,6 +61,7 @@ public class QuartzUtil {
     public static void addJob(String target, String jobName, String groupName, int interval) {
         try {
             QuartzProvider.getInstance().getScheduler().scheduleJob(buildJobDetail(target, jobName, groupName), buildSimpleTrigger(interval, jobName, groupName));
+            logger.debug("register simple job, target[{}], name[{}], group[{}], interval[{}]", target, jobName, groupName, interval);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -70,6 +77,7 @@ public class QuartzUtil {
     public static void addJob(String target, String jobName, String groupName, String cronExpression) {
         try {
             QuartzProvider.getInstance().getScheduler().scheduleJob(buildJobDetail(target, jobName, groupName), buildCronTrigger(cronExpression, jobName, groupName));
+            logger.debug("register cron job, target[{}], name[{}], group[{}], expression[{}]", target, jobName, groupName, cronExpression);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -82,9 +90,10 @@ public class QuartzUtil {
      * @param groupName
      * @param cronExpression
      */
-    public static void addJob(Class<Job> jobClass, String jobName, String groupName, String cronExpression) {
+    public static void addJob(Class<? extends Job> jobClass, String jobName, String groupName, String cronExpression) {
         try {
             QuartzProvider.getInstance().getScheduler().scheduleJob(buildJobDetail(jobClass, jobName, groupName), buildCronTrigger(cronExpression, jobName, groupName));
+            logger.debug("register cron job, target[{}], name[{}], group[{}], expression[{}]", jobClass.toString(), jobName, groupName, cronExpression);
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
@@ -148,7 +157,7 @@ public class QuartzUtil {
      */
     private static JobDetail buildJobDetail(String target, String name, String group) {
         try {
-            return buildJobDetail((Class<Job>) Class.forName(target), name, group);
+            return buildJobDetail((Class<? extends Job>) Class.forName(target), name, group);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -162,7 +171,7 @@ public class QuartzUtil {
      * @param group
      * @return
      */
-    private static JobDetail buildJobDetail(Class<Job> jobClass, String name, String group) {
+    private static JobDetail buildJobDetail(Class<? extends Job> jobClass, String name, String group) {
         return JobBuilder.newJob(jobClass).withIdentity(name, group).build();
     }
 
@@ -173,7 +182,7 @@ public class QuartzUtil {
      * @param group
      * @return
      */
-    private static JobDetail buildJobDetail(Class<Job> jobClass, String name, String group, Map<String, String> map) {
+    private static JobDetail buildJobDetail(Class<? extends Job> jobClass, String name, String group, Map<String, Object> map) {
         JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(name, group).build();
         jobDetail.getJobDataMap().putAll(map);
         return jobDetail;
